@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+
 const defaultGigs = [
   {
     id: 1,
@@ -41,11 +42,16 @@ const defaultGigs = [
 
 export default function Gigs() {
   const [allGigs, setAllGigs] = useState<any[]>([])
+  const [search, setSearch] = useState("")
   const searchParams = useSearchParams()
 
-  const search = searchParams.get("search")?.toLowerCase() || ""
+  useEffect(() => {
+    setSearch(searchParams.get("search")?.toLowerCase() || "")
+  }, [searchParams])
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+
     const storedGigs =
       JSON.parse(localStorage.getItem("userGigs") || "[]")
 
@@ -69,7 +75,6 @@ export default function Gigs() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white px-10 py-10">
 
-      {/* PAGE TITLE */}
       <h1 className="text-3xl font-bold mb-2">
         Explore Services
       </h1>
@@ -80,36 +85,10 @@ export default function Gigs() {
         </p>
       )}
 
-      {/* FILTER BAR */}
-      <div className="flex gap-4 mb-10">
-
-        <select className="bg-zinc-900 border border-zinc-700 px-4 py-2 rounded">
-          <option>Category</option>
-          <option>Design</option>
-          <option>Tutoring</option>
-          <option>Programming</option>
-        </select>
-
-        <select className="bg-zinc-900 border border-zinc-700 px-4 py-2 rounded">
-          <option>Price</option>
-          <option>₹0 - ₹300</option>
-          <option>₹300 - ₹600</option>
-        </select>
-
-        <select className="bg-zinc-900 border border-zinc-700 px-4 py-2 rounded">
-          <option>Rating</option>
-          <option>4★ & above</option>
-          <option>3★ & above</option>
-        </select>
-
-      </div>
-
-      {/* GIG GRID */}
       <div className="grid grid-cols-4 gap-6">
 
         {filteredGigs.map((gig) => (
           <Link key={gig.id} href={`/gig/${gig.id}`}>
-
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:bg-zinc-800 transition cursor-pointer">
 
               <img
@@ -118,7 +97,6 @@ export default function Gigs() {
               />
 
               <div className="p-4">
-
                 <p className="text-sm text-zinc-400">
                   {gig.seller}
                 </p>
@@ -128,7 +106,6 @@ export default function Gigs() {
                 </h2>
 
                 <div className="flex justify-between items-center mt-4">
-
                   <p className="text-yellow-400">
                     ⭐ {gig.rating}
                   </p>
@@ -136,13 +113,10 @@ export default function Gigs() {
                   <p className="font-semibold">
                     ₹{gig.price}
                   </p>
-
                 </div>
-
               </div>
 
             </div>
-
           </Link>
         ))}
 
