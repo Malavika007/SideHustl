@@ -2,7 +2,6 @@
 export const dynamic = "force-dynamic"
 
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 
 const defaultGigs = [
@@ -43,14 +42,13 @@ const defaultGigs = [
 export default function Gigs() {
   const [allGigs, setAllGigs] = useState<any[]>([])
   const [search, setSearch] = useState("")
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    setSearch(searchParams.get("search")?.toLowerCase() || "")
-  }, [searchParams])
 
   useEffect(() => {
     if (typeof window === "undefined") return
+
+    const params = new URLSearchParams(window.location.search)
+    const query = params.get("search")?.toLowerCase() || ""
+    setSearch(query)
 
     const storedGigs =
       JSON.parse(localStorage.getItem("userGigs") || "[]")
